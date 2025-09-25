@@ -1,0 +1,16 @@
+docker/mongodb/diagnostic.data/
+docker/
+docker/mongo
+./node_modules
+./dist
+./dist-bundle
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env.development
+.env.test
+.env.production
+node_modules
+dist
