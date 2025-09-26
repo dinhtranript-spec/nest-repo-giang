@@ -51,4 +51,11 @@ export class CongViecModel extends Model implements CongViec {
         field: '_ngayKetThucThucTe'
     })
     ngayKetThucThucTe?: string;
+
+    @Column({
+        type: DataType.JSON,
+        allowNull: true,
+        field: '_danhSachNhanVien'
+    })
+    danhSachNhanVien?: string[];
 }

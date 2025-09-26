@@ -2,7 +2,7 @@ import { StrObjectId } from "@common/constant";
 import { EntityDefinition } from "@common/constant/class/entity-definition";
 import { BaseEntity } from "@common/interface/base-entity.interface";
 import { Entity } from "@module/repository";
-import { IsString } from "class-validator";
+import { IsString, IsOptional, IsArray } from "class-validator";
 
 export class PhongBan implements BaseEntity {
     @StrObjectId()
@@ -19,4 +19,9 @@ export class PhongBan implements BaseEntity {
     @IsString()
     @EntityDefinition.field({ label: "Ngày thành lập", required: true })
     ngayThanhLap: string;
+
+    @IsArray()
+    @IsOptional()
+    @EntityDefinition.field({ label: "Danh sách mã nhân viên trong phòng ban" })
+    danhSachNhanVien?: string[];
 }

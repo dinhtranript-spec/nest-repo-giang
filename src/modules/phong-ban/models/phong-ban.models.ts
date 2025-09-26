@@ -37,4 +37,11 @@ export class PhongBanModel extends Model implements PhongBan {
         field: '_ngayThanhLap'
     })
     ngayThanhLap: string;
+
+    @Column({
+        type: DataType.JSON,
+        allowNull: true,
+        field: '_danhSachNhanVien'
+    })
+    danhSachNhanVien?: string[];
 }

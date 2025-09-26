@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty, IsOptional } from "class-validator";
+import { IsString, IsNotEmpty, IsOptional, IsArray } from "class-validator";
 import { EntityDefinition } from "@common/constant/class/entity-definition";
 
 export class UpdateCongViecDto {
@@ -26,4 +26,9 @@ export class UpdateCongViecDto {
     @IsOptional()
     @EntityDefinition.field({ label: "Ngày kết thúc thực tế" })
     ngayKetThucThucTe?: string;
+
+    @IsArray()
+    @IsOptional()
+    @EntityDefinition.field({ label: "Danh sách mã nhân viên thực hiện" })
+    danhSachNhanVien?: string[];
 }

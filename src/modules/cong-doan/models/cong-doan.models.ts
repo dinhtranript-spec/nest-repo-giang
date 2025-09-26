@@ -45,16 +45,12 @@ export class CongDoanModel extends Model implements CongDoan {
     @BelongsTo(() => DuAnModel)
     duAn: DuAnModel;
 
-    @ForeignKey(() => NhanVienModel)
     @Column({
-        type: DataType.STRING,
+        type: DataType.JSON,
         allowNull: false,
-        field: '_maNhanVien'
+        field: '_danhSachNhanVien'
     })
-    maNhanVien: string;
-
-    @BelongsTo(() => NhanVienModel)
-    nhanVien: NhanVienModel;
+    danhSachNhanVien: string[];
 
     @Column({
         type: DataType.STRING,

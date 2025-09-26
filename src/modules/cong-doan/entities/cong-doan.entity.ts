@@ -2,7 +2,7 @@ import { StrObjectId } from "@common/constant";
 import { EntityDefinition } from "@common/constant/class/entity-definition";
 import { BaseEntity } from "@common/interface/base-entity.interface";
 import { Entity } from "@module/repository";
-import { IsString, IsOptional } from "class-validator";
+import { IsString, IsOptional, IsArray } from "class-validator";
 
 export class CongDoan implements BaseEntity {
     @StrObjectId()
@@ -20,9 +20,9 @@ export class CongDoan implements BaseEntity {
     @EntityDefinition.field({ label: "Mã dự án", required: true })
     maDuAn: string;
 
-    @IsString()
-    @EntityDefinition.field({ label: "Mã nhân viên", required: true })
-    maNhanVien: string;
+    @IsArray()
+    @EntityDefinition.field({ label: "Danh sách mã nhân viên thực hiện", required: true })
+    danhSachNhanVien: string[];
 
     @IsString()
     @IsOptional()

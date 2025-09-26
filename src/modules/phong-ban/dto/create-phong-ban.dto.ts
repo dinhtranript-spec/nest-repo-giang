@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty } from "class-validator";
+import { IsString, IsNotEmpty, IsOptional, IsArray } from "class-validator";
 import { EntityDefinition } from "@common/constant/class/entity-definition";
 
 export class CreatePhongBanDto {
@@ -16,4 +16,9 @@ export class CreatePhongBanDto {
     @IsNotEmpty({ message: "Ngày thành lập không được để trống" })
     @EntityDefinition.field({ label: "Ngày thành lập", required: true })
     ngayThanhLap: string;
+
+    @IsArray()
+    @IsOptional()
+    @EntityDefinition.field({ label: "Danh sách mã nhân viên trong phòng ban" })
+    danhSachNhanVien?: string[];
 }

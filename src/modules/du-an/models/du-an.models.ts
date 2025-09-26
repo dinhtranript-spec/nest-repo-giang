@@ -45,16 +45,12 @@ export class DuAnModel extends Model implements DuAn {
     @BelongsTo(() => LoaiDuAnModel)
     loaiDuAn: LoaiDuAnModel;
 
-    @ForeignKey(() => NhanVienModel)
     @Column({
-        type: DataType.STRING,
+        type: DataType.JSON,
         allowNull: false,
-        field: '_maNhanVien'
+        field: '_danhSachNhanVienPhuTrach'
     })
-    maNhanVien: string;
-
-    @BelongsTo(() => NhanVienModel)
-    nhanVien: NhanVienModel;
+    danhSachNhanVienPhuTrach: string[];
 
     @ForeignKey(() => PhongBanModel)
     @Column({

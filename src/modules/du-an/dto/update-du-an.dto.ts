@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty, IsOptional } from "class-validator";
+import { IsString, IsNotEmpty, IsOptional, IsArray } from "class-validator";
 import { EntityDefinition } from "@common/constant/class/entity-definition";
 
 export class UpdateDuAnDto {
@@ -17,10 +17,10 @@ export class UpdateDuAnDto {
     @EntityDefinition.field({ label: "Mã loại dự án", required: true })
     maLoaiDuAn: string;
 
-    @IsString()
-    @IsNotEmpty({ message: "Mã nhân viên không được để trống" })
-    @EntityDefinition.field({ label: "Mã nhân viên", required: true })
-    maNhanVien: string;
+    @IsArray()
+    @IsNotEmpty({ message: "Danh sách nhân viên phụ trách không được để trống" })
+    @EntityDefinition.field({ label: "Danh sách mã nhân viên phụ trách", required: true })
+    danhSachNhanVienPhuTrach: string[];
 
     @IsString()
     @IsNotEmpty({ message: "Mã phòng ban không được để trống" })
