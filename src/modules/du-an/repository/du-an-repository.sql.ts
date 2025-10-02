@@ -5,6 +5,7 @@ import { DuAnRepository } from "./du-an-repository.interface";
 import { SqlRepository } from "@module/repository/sequelize/sql.repository";
 import { LoaiDuAnModel } from "../../loai-du-an/models/loai-du-an.models";
 import { PhongBanModel } from "../../phong-ban/models/phong-ban.models";
+import { NhanVienModel } from "../../nhan-vien/models/nhan-vien.models";
 import { PageableDto } from "@common/dto/pageable.dto";
 import { SqlUtil } from "@common/utils/sql.ulti";
 
@@ -32,7 +33,7 @@ export class DuAnRepositorySql extends SqlRepository<DuAn> implements DuAnReposi
             ]
         });
         
-        return result ? this.transformResponse(result) : null;
+        return result ? await this.transformResponse(result) : null;
     }
 
     async getOne(conditions: any, options?: any) {
@@ -51,7 +52,7 @@ export class DuAnRepositorySql extends SqlRepository<DuAn> implements DuAnReposi
             ]
         });
         
-        return result ? this.transformResponse(result) : null;
+        return result ? await this.transformResponse(result) : null;
     }
 
     async getMany(conditions: any, options?: any) {
@@ -70,7 +71,7 @@ export class DuAnRepositorySql extends SqlRepository<DuAn> implements DuAnReposi
             ]
         });
         
-        return results.map(result => this.transformResponse(result));
+        return Promise.all(results.map(result => this.transformResponse(result)));
     }
 
     async getPage(conditions: any, query?: any) {
@@ -101,7 +102,7 @@ export class DuAnRepositorySql extends SqlRepository<DuAn> implements DuAnReposi
                     limit: query?.limit,
                     order: SqlUtil.getOrder(query?.sort),
                 })
-                .then((list) => list.map((row) => this.transformResponse(row))),
+                .then((list) => Promise.all(list.map((row) => this.transformResponse(row)))),
             await this.duAnModel.count({
                 where: SqlUtil.getCondition(conditions, query?.filters),
                 include: SqlUtil.getIncludeable(populate),
@@ -115,8 +116,29 @@ export class DuAnRepositorySql extends SqlRepository<DuAn> implements DuAnReposi
     }
     
     // Helper method to transform the response
-    private transformResponse(model: any) {
+    private async transformResponse(model: any) {
         const plainObject = model.get({ plain: true });
+        
+        // Transform danhSachNhanVienPhuTrach from array of IDs to array of objects with employee details
+        if (plainObject.danhSachNhanVienPhuTrach && Array.isArray(plainObject.danhSachNhanVienPhuTrach)) {
+            const nhanVienDetails = await NhanVienModel.findAll({
+                where: {
+                    _id: plainObject.danhSachNhanVienPhuTrach
+                }
+            });
+            
+            // Create a map for quick lookup
+            const nhanVienMap = new Map();
+            nhanVienDetails.forEach(nv => {
+                nhanVienMap.set(nv._id, nv.get({ plain: true }));
+            });
+            
+            // Transform the array
+            plainObject.danhSachNhanVienPhuTrach = plainObject.danhSachNhanVienPhuTrach.map((maNhanVien: string) => {
+                return nhanVienMap.get(maNhanVien) || maNhanVien;
+            });
+        }
+        
         return plainObject;
     }
 }
