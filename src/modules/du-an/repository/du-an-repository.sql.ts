@@ -120,23 +120,29 @@ export class DuAnRepositorySql extends SqlRepository<DuAn> implements DuAnReposi
         const plainObject = model.get({ plain: true });
         
         // Transform danhSachNhanVienPhuTrach from array of IDs to array of objects with employee details
-        if (plainObject.danhSachNhanVienPhuTrach && Array.isArray(plainObject.danhSachNhanVienPhuTrach)) {
-            const nhanVienDetails = await NhanVienModel.findAll({
-                where: {
-                    _id: plainObject.danhSachNhanVienPhuTrach
-                }
-            });
-            
-            // Create a map for quick lookup
-            const nhanVienMap = new Map();
-            nhanVienDetails.forEach(nv => {
-                nhanVienMap.set(nv._id, nv.get({ plain: true }));
-            });
-            
-            // Transform the array
-            plainObject.danhSachNhanVienPhuTrach = plainObject.danhSachNhanVienPhuTrach.map((maNhanVien: string) => {
-                return nhanVienMap.get(maNhanVien) || maNhanVien;
-            });
+        if (plainObject.danhSachNhanVienPhuTrach && Array.isArray(plainObject.danhSachNhanVienPhuTrach) && plainObject.danhSachNhanVienPhuTrach.length > 0) {
+            try {
+                const nhanVienDetails = await NhanVienModel.findAll({
+                    where: {
+                        _id: plainObject.danhSachNhanVienPhuTrach
+                    }
+                });
+                
+                // Create a map for quick lookup
+                const nhanVienMap = new Map();
+                nhanVienDetails.forEach(nv => {
+                    const nvData = nv.get({ plain: true });
+                    nhanVienMap.set(nvData._id, nvData);
+                });
+                
+                // Transform the array
+                plainObject.danhSachNhanVienPhuTrach = plainObject.danhSachNhanVienPhuTrach.map((maNhanVien: string) => {
+                    return nhanVienMap.get(maNhanVien) || maNhanVien;
+                });
+            } catch (error) {
+                console.error('Error transforming danhSachNhanVienPhuTrach:', error);
+                // If there's an error, keep the original array
+            }
         }
         
         return plainObject;

@@ -120,23 +120,29 @@ export class CongDoanRepositorySql extends SqlRepository<CongDoan> implements Co
         const plainObject = model.get({ plain: true });
         
         // Transform danhSachNhanVien from array of IDs to array of objects with employee details
-        if (plainObject.danhSachNhanVien && Array.isArray(plainObject.danhSachNhanVien)) {
-            const nhanVienDetails = await NhanVienModel.findAll({
-                where: {
-                    _id: plainObject.danhSachNhanVien
-                }
-            });
-            
-            // Create a map for quick lookup
-            const nhanVienMap = new Map();
-            nhanVienDetails.forEach(nv => {
-                nhanVienMap.set(nv._id, nv.get({ plain: true }));
-            });
-            
-            // Transform the array
-            plainObject.danhSachNhanVien = plainObject.danhSachNhanVien.map((maNhanVien: string) => {
-                return nhanVienMap.get(maNhanVien) || maNhanVien;
-            });
+        if (plainObject.danhSachNhanVien && Array.isArray(plainObject.danhSachNhanVien) && plainObject.danhSachNhanVien.length > 0) {
+            try {
+                const nhanVienDetails = await NhanVienModel.findAll({
+                    where: {
+                        _id: plainObject.danhSachNhanVien
+                    }
+                });
+                
+                // Create a map for quick lookup
+                const nhanVienMap = new Map();
+                nhanVienDetails.forEach(nv => {
+                    const nvData = nv.get({ plain: true });
+                    nhanVienMap.set(nvData._id, nvData);
+                });
+                
+                // Transform the array
+                plainObject.danhSachNhanVien = plainObject.danhSachNhanVien.map((maNhanVien: string) => {
+                    return nhanVienMap.get(maNhanVien) || maNhanVien;
+                });
+            } catch (error) {
+                console.error('Error transforming danhSachNhanVien:', error);
+                // If there's an error, keep the original array
+            }
         }
         
         return plainObject;
